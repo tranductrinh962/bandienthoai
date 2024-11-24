@@ -1,0 +1,70 @@
+
+<nav class="navbar navbar-expand-lg bg-light pe-5 ps-5 sticky-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fs-4 me-0" href="/">Evérest</a><span class="badge rounded-pill text-bg-danger">
+      <% if (currentUser.role==='Admin'){ %>
+      Admin
+      <%}else if (currentUser.role==='Nhân viên kho hàng'){ %>
+      Nhân viên kho hàng
+      <%}else if (currentUser.role==='Nhân viên bán hàng'){ %>
+      Nhân viên bán hàng
+      <%}%>
+    
+    </span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse ms-4" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link fs-6" href="/">Thoát giao diện</a>
+        </li>
+          <li class="nav-item">
+          <a class="nav-link fs-6" href="/settings">Giao diện Admin</a>
+        </li>
+           </li>
+           <% if (currentUser.role === 'Nhân viên bán hàng' || currentUser.role === 'Admin'){ %>
+      <li class="nav-item">
+        <a class="nav-link fs-6" href="/messages">Tin nhắn</a>
+      </li>
+      <%}%>
+      </ul>
+      <% if (currentUser){ %>
+
+
+
+
+
+      <ul class="navbar-nav ms-auto">
+        
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle fs-6" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Chào mừng, <span style="font-weight: bold; padding:0"><%= currentUser.lastName %> <%= currentUser.firstName %></span>
+          </a>
+          <ul class="dropdown-menu animate__animated animate__fadeIn">
+            <li><a class="dropdown-item fs-6" href="/account">Thông tin tài khoản</a></li>
+            <li><a class="dropdown-item fs-6" href="/account/order-history">Đơn hàng</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item fs-6" href="/logout">Đăng xuất</a></li>
+          </ul>
+        </li>
+
+      </ul>
+      <% } else { %>
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a class="btn btn-dark fs-6" href="/login">Đăng nhập</a>
+        </li>
+      </ul>
+      <%}%>
+      </div>
+    </div>
+  </nav>
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  

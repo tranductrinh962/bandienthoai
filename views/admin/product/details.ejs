@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông tin sản phẩm</title>
+  <link rel="stylesheet" href="../../css/bootstrap.min.css">
+  <link rel="shortcut icon" href="../../images/favicon.png" type="image/x-icon">
+</head>
+
+
+<body>
+  <style>
+    input {
+      border: none;
+      outline: none;
+      background-color: transparent;
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.2s ease-in-out;
+
+    }
+
+
+
+    .table-responsive {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    .highlight {
+      background-color: #ffcccc;
+      /* Light red color for highlighting */
+    }
+
+    .table {
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .highlight-btn {
+      margin-left: 5px;
+    }
+
+
+
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .popup-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 30%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #colorError {
+      color: red;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+
+
+    form {
+      display: inline-block;
+    }
+
+
+
+    button {
+      padding: 6px 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f9f9f9;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+
+
+
+    /* Spinner styles */
+    #spinner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+    }
+
+    .spinner-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #fff;
+    }
+
+
+    .spinner-icon {
+      font-size: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <!-- Spinner -->
+  <div id="spinner">
+    <div class="spinner-content">
+      <div class="spinner-icon">&#9696;</div>
+      <p>Loading...</p>
+    </div>
+  </div>
+  <!--End of Spinner-->
+
+  <%- include('../../partials/navadmin.ejs') %>
+  <%let letDisabled=''%>
+  <%if (currentUser.role !== "Admin"){%>
+  <%letDisabled = 'disabled'%>
+  <%}%> 
+
+  <div class="container">
+
+
+     <% if (currentUser.role==='Admin'){ %>
+
+  <div id="inputPopupColor" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="hidePopupColor()">&times;</span>
+      <form id="addColor">
+        <input type="text" required placeholder="Điền màu mới (Ví dụ: Tím)" oninput="validateColor(event)" id="colorInput">
+        <input type="color" class="form-control" id="colorHexInput" required>
+        <div id="colorError"></div>
+        <input type="submit" value="Xác nhận">
+        <p>Lưu ý: Mặc định giá và số lượng sẽ lấy từ màu đầu tiên</p>
+        <button type="button" onclick="hidePopupColor()">Hủy bỏ</button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <div id="inputPopupSpec" class="popup">
+    <div class="popup-content">
+      <span class="close" onclick="hidePopupSpec()">&times;</span>
+      <form id="addSpec">
+        <input class="spec" required type="number" oninput="validateNum(event)" name="ram" placeholder="Điền dung lượng ram (Ví dụ: 8)" id="ramInput">
+        <input class="spec" required type="number" oninput="validateNum(event)" name="storage" placeholder="Điền dung lượng bộ nhớ (Ví dụ: 256)" id="storageInput">
+        <div id="colorErrorSpec" class="error-message"></div>
+        <input type="submit" value="Xác nhận">
+        <p>Lưu ý: Mặc định giá và số lượng sẽ được đặt bằng 0</p>
+        <button type="button" onclick="hidePopupSpec()">Hủy bỏ</button>
+      </form>
+    </div>
+  </div>
+  <%}%>
+
+
+    <h1>Thông tin sản phẩm <a class="btn btn-success" href="/settings">Quay lại</a></h1>
+    <div class="row">
+<div class="col-md-6">
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title mb-3"><%= product.name %></h5>
+  <div class="row">
+    <div class="col-md-6">
+      <p class="mb-2"><strong>Loại máy:</strong> <%= product.model %></p>
+      <p class="mb-2"><strong>Thương hiệu:</strong> <%= product.productBrand.brand %></p>
+      <p class="mb-2"><strong>Hệ điều hành:</strong> <%= product.os %></p>
+      <p class="mb-2"><strong>CPU:</strong> <%= product.generalSpecifications.cpu %></p>
+      <p class="mb-2"><strong>Camera:</strong> <%= product.generalSpecifications.camera.primary %>, <%= product.generalSpecifications.camera.secondary %></p>
+    </div>
+    <div class="col-md-6">
+      <p class="mb-2"><strong>Pin:</strong> <%= product.generalSpecifications.battery %></p>
+      <p class="mb-2"><strong>Màn hình:</strong> <%= product.generalSpecifications.display %></p>
+      <p class="mb-3 text-truncate"><strong>Mô tả:</strong> <%= product.description %></p>
+      <div class="color-list">
+        <strong>Màu:</strong>
+        <div class="d-flex flex-wrap">
+          <% product.colorVariants.forEach(variant => { %>
+          <span class="badge bg-secondary me-2 mb-2"><%= variant.color %></span>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <% if (currentUser.role==='Admin' || currentUser.role==='Nhân viên bán hàng' ){ %>
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Thao tác</h5>
+        <button class="btn btn-danger mb-3" onclick="window.location.href = '/settings/products/<%= product._id%>/update'">Sửa thông tin sản phẩm</button>
+        <button class="btn btn-danger mb-3" onclick="showPopupColor()">Tạo màu mới</button>
+        <button class="btn btn-danger mb-3" onclick="showPopupSpec()">Tạo cấu hình mới</button>
+
+
+        <form action="/settings/products/sale/<%= product._id %>" method="post" class="mb-4 mt-4 w-100">
+          <div class="row">
+            <div class="col-6">
+              <label for="" class="form-label">Phần trăm giảm giá (Phạm vi 0 - 100)</label>
+              <input type="number" oninput="validateNum(event)" name="sale" min="0" value="<%= product.discount%>" max="100" min="0" class="form-control mb-2">
+            </div>
+            <div class="col-3">
+              <label for="" class="form-label">Đang hot</label>
+              <select id="isHot" name="isHot" class="form-select mb-2">
+                <option value="false" <%= product.isHot === false ? 'selected' : '' %>>Không</option>
+                <option value="true" <%= product.isHot === true ? 'selected' : '' %>>Có</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Áp dụng</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <%}%>
+    </div>
+
+
+
+
+<div class="table-responsive" style="max-width: 1500px; margin: auto;">
+  <table class="table-bordered" style="width: 100%;border:1px solid rgb(242,242,242);
+    white-space: nowrap;">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Màu:</th>
+        <% product.colorVariants.forEach(variant => { %>
+  <th colspan="3">
+    <%= variant.color %>
+    <% if (currentUser.role === "Admin") { %>
+    <% if (colorCount > 1) { %>
+    <form action="/settings/products/delete-color/<%= product._id %>/<%= variant.color %>" method="post" class="d-inline">
+      <button type="submit" class="btn btn-danger btn-sm highlight-btn">Xóa</button>
+    </form>
+    <% } %>
+    <% } %>
+  </th>
+  <% }); %>
+  </tr>
+  <tr>
+    <th style="width: 100px">Ram (GB)</th>
+    <th style="width: 100px">Bộ nhớ (GB)</th>
+    <% product.colorVariants.forEach(variant => { %>
+    <th style="min-width: 140px">Giá</th>
+    <th style="min-width: 100px">SL</th>
+    <th style="min-width: 40px"></th>
+    <% }); %>
+    <% if (currentUser.role === 'Admin') { %>
+    <th>Thao tác</th>
+    <% } %>
+  </tr>
+  </thead>
+  <tbody>
+    <% for (let i = 0; i < specVariationsCount; i++) { %>
+    <% let highlightRow = false; %>
+    <tr class="<% product.colorVariants.forEach(variant => { if (variant.specVariations[i].stock == 0) { highlightRow = true; } }); %><%= highlightRow ? 'highlight' : '' %>">
+      <form id="specForm-<%= product.colorVariants[0].specVariations[i].specID %>" action="/settings/products/update-spec/<%= product._id %>/<%= product.colorVariants[0].specVariations[i].ram %>/<%= product.colorVariants[0].specVariations[i].storage %>" method="POST">
+        <td><input type="text" oninput="validateNum(event)" <%= letDisabled %> name="nRam" value="<%= product.colorVariants[0].specVariations[i].ram %>" class="form-control <%= letDisabled %>"></td>
+        <td><input type="text" oninput="validateNum(event)" <%= letDisabled %> name="nStorage" value="<%= product.colorVariants[0].specVariations[i].storage %>" class="form-control <%= letDisabled %>"></td>
+      </form>
+      <% product.colorVariants.forEach(variant => { %>
+      <form id="priceStockForm-<%= variant.specVariations[i].specID %>" action="/settings/products/update-priceStock/<%= product._id %>/<%= variant.specVariations[i].specID %>" method="POST">
+        <td><input type="number" oninput="validateNum(event)" name="nprice" <%= letDisabled %> class="form-control price <%= letDisabled %>" value="<%= variant.specVariations[i].defaultPrice ? variant.specVariations[i].defaultPrice : variant.specVariations[i].price %>"></td>
+        <td><input type="number" oninput="validateNum(event)" name="nstock" value="<%= variant.specVariations[i].stock %>" class="form-control"></td>
+        <td><button type="submit" class="btn btn-primary">Sửa</button></td>
+      </form>
+      <% }); %>
+      <% if (currentUser.role === 'Admin') { %>
+      <td>
+        <button class="btn btn-primary">Sửa RAM và bộ nhớ</button>
+        <% if (specVariationsCount > 1) { %>
+        <form action="/settings/products/delete-spec/<%= product._id %>/<%= product.colorVariants[0].specVariations[i].ram %>/<%= product.colorVariants[0].specVariations[i].storage %>" method="post" class="d-inline">
+          <button type="submit" class="btn btn-danger">Xóa cấu hình này</button>
+        </form>
+        <% } %>
+      </td>
+      <% } %>
+    </tr>
+    <% } %>
+  </tbody>
+  </table>
+  </div>
+
+
+
+
+  </div>
+
+
+  <script src="../../js/jquery-3.5.1.min.js"></script>
+  <script src="../../js/jquery-ui.min.js"></script>
+  <script src="../../js/slick.min.js"></script>
+  <script src="../../js/jquery.nice-select.min.js"></script>
+  <script src="../../js/app.js"></script>
+  <script src="../../js/cart.js"></script>
+
+  <script>
+    function validateNum(event) {
+      event.target.value = event.target.value.replace(/[^0-9]/g, '');
+    }
+
+    function validateColor(event) {
+      event.target.value = event.target.value.replace(/[^A-Za-zà-ỹ\s]/g, '');
+    }
+
+    document.getElementById('addColor').addEventListener('submit', function(e) {
+      showSpinner()
+      e.preventDefault();
+
+
+      const color = document.getElementById('colorInput').value;
+      const colorHex = document.getElementById('colorHexInput').value;
+      const productID = '<%= product._id %>'
+      fetch(`/settings/products/add-color/${productID}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            color,colorHex
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('colorError').textContent = data.error;
+          } else {
+            location.reload();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+
+    document.getElementById('addSpec').addEventListener('submit', function(e) {
+      showSpinner()
+      e.preventDefault();
+
+
+      const ram = document.getElementById('ramInput').value;
+      const storage = document.getElementById('storageInput').value;
+      const productID = '<%= product._id %>'
+      fetch(`/settings/products/addSpec/${productID}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ram,
+            storage
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('colorErrorSpec').textContent = data.error;
+          } else {
+            location.reload();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+
+
+    function confirmSpec(specID) {
+      showSpinner()
+      const form = document.getElementById(`specForm-${specID}`);
+      form.submit();
+    }
+
+    function confirmPriceStock(specID) {
+      showSpinner()
+      const form = document.getElementById(`priceStockForm-${specID}`);
+      form.submit();
+    }
+
+
+    function showPopupColor() {
+      var popup = document.getElementById('inputPopupColor');
+      popup.style.display = 'block';
+    }
+
+    function showPopupSpec() {
+      var popup = document.getElementById('inputPopupSpec');
+      popup.style.display = 'block';
+    }
+
+    function hidePopupColor() {
+      var popup = document.getElementById('inputPopupColor');
+      popup.style.display = 'none';
+    }
+
+    function hidePopupSpec() {
+      var popup = document.getElementById('inputPopupSpec');
+      popup.style.display = 'none';
+    }
+
+
+
+    function showSpinner() {
+      document.getElementById('spinner').style.display = 'block';
+    }
+
+
+    function hideSpinner() {
+      document.getElementById('spinner').style.display = 'none';
+    }
+  </script>
+
+</body>
+
+</html>

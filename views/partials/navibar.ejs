@@ -1,0 +1,238 @@
+<script src="https://kit.fontawesome.com/9e2be1376b.js" crossorigin="anonymous"></script>
+<style>
+  .nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  border-radius: 10px;
+  padding: 0;
+}
+.dropdown-item{
+  border-radius: 10px;
+  padding-bottom: 8px;
+}
+.dropdown-divider{
+  margin:0
+}
+.line{
+  margin:0
+}
+
+
+  @media (max-width: 990px) {
+    .nav-item.dropdown .dropdown-menu {
+      display: none; 
+    }
+
+    .nav-item.dropdown .nav-link {
+      pointer-events: none;
+    }
+  }
+</style>
+<!-- <header class="bg-danger text-white d-flex justify-content-center align-items-center py-1">
+  <p class="text-center m-0 font-weight-bold" style="font-size: 15px;">Website đang còn được phát triển. Đội ngũ chúng
+    mình sẽ sớm hoàn thành toàn diện trong thời gian sớm nhất.</p>
+</header> -->
+<nav class="navbar navbar-expand-lg bg-light pe-5 ps-5 sticky-top shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fs-4 me-0 font-weight-bold" href="/">Evérest</a>
+    <%if (currentUser){%>
+      <% if (currentUser.role==='Admin' ){ %><span class="badge rounded-pill text-bg-danger me-2"
+          style="font-size: 10px;">Admin</span>
+        <%}else if (currentUser.role==='Nhân viên kho hàng' ){ %><span
+            class="badge rounded-pill text-bg-danger me-2">Nhân
+            viên kho hàng</span>
+          <%}else if (currentUser.role==='Nhân viên bán hàng' ){ %><span
+              class="badge rounded-pill text-bg-danger  me-2">Nhân
+              viên bán hàng</span>
+            <%}}%>
+
+
+
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                  <li class="nav-item">
+                    <a class="nav-link fs-6" href="/">Trang chủ</a>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link  fs-6" href="/products" id="navbarDropdown" role="button">
+                      Sản phẩm
+                    </a>
+                    <ul class="dropdown-menu" id="brandDropdown" aria-labelledby="navbarDropdown">
+                      <!-- Brands will be populated here by JavaScript -->
+                    </ul>
+                  </li>
+                  
+
+                  <li class="nav-item">
+                    <a class="nav-link fs-6" href="/about-us">Về chúng tôi</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link fs-6" href="/contact-support">Liên hệ</a>
+                  </li>
+
+
+
+                  <% if (currentUser){ %>
+                    <% if (currentUser.role==='Admin' ){ %>
+                      <li class="nav-item">
+                        <a class="btn btn-danger fs-6 me-2" href="/settings" onclick="checkDevice(event)">Quản lí
+                          Admin</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="btn btn-danger fs-6" href="/messages" onclick="checkDevice(event)">Tin nhắn</a>
+                      </li>
+                      <% }else if (currentUser.role==='Nhân viên bán hàng' ){ %>
+                        <li class="nav-item">
+                          <a class="btn btn-warning text-white fs-6 me-2" href="/settings"
+                            onclick="checkDevice(event)">Quản lí bán hàng</a>
+                        </li>
+                        <li class="nav-item ms-3">
+                          <a class="btn btn-warning text-white fs-6" href="/messages" onclick="checkDevice(event)">Tin
+                            nhắn</a>
+                        </li>
+                        <%}else if (currentUser.role==='Nhân viên kho hàng' ){ %>
+                          <li class="nav-item">
+                            <a class="btn btn-warning text-white fs-6" href="/settings"
+                              onclick="checkDevice(event)">Quản lí kho hàng</a>
+                          </li>
+                          <%}%>
+
+
+
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item position-relative">
+                    <a class="nav-link fs-6" href="/cart">
+                      <i class="fa-solid fa-cart-shopping"></i>
+                      <span id="cartQuantity"
+                        class="top-100 start-100 translate-middle badge rounded-pill bg-danger font-normal ms-1"
+                        style="font-size: 12px;">0</span>
+
+                    </a>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fs-6" href="#" role="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      Chào mừng, <span style="font-weight: bold; padding:0">
+                        <%= currentUser.lastName %>
+                          <%= currentUser.firstName %>
+                      </span>
+                    </a>
+                    <ul class="dropdown-menu animate__animated animate__fadeIn">
+                      <li><a class="dropdown-item fs-6" href="/account">Thông tin tài khoản</a></li>
+                      <li><a class="dropdown-item fs-6" href="/account/order-history">Đơn hàng</a></li>
+                      <li>
+                        <hr class="dropdown-divider">
+                      </li>
+                      <li><a class="dropdown-item fs-6" href="/logout">Đăng xuất</a></li>
+                    </ul>
+                  </li>
+
+                </ul>
+                <% } else { %>
+                  <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item position-relative me-2">
+                      <a class="btn btn-dark fs-6" href="/login">Đăng nhập</a>
+                    </li>
+                  </ul>
+                  <%}%>
+              </div>
+  </div>
+</nav>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script>
+  
+   document.addEventListener("DOMContentLoaded", () => {
+    
+    async function fetchBrands() {
+      try {
+        const response = await fetch('/api/brands'); 
+        const brands = await response.json(); 
+
+        const dropdownMenu = document.getElementById('brandDropdown'); 
+
+        
+        dropdownMenu.innerHTML = '';
+
+        
+        brands.slice(0, 5).forEach(brand => {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.classList.add('dropdown-item');
+          
+          link.href = `/products?brand=${brand.brand}`;
+          link.textContent = brand.brand;
+          listItem.appendChild(link);
+          dropdownMenu.appendChild(listItem);
+        });
+        const line = document.createElement('hr');
+        line.classList.add('line')
+        dropdownMenu.appendChild(line)
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.classList.add('dropdown-item', 'more-link');
+          link.href = '/products';
+          link.textContent = 'Xem thêm...';
+          listItem.appendChild(link);
+          dropdownMenu.appendChild(listItem);
+        
+      } catch (err) {
+        console.error('Error fetching brands:', err);
+      }
+    }
+
+    
+    fetchBrands();
+  });
+
+
+
+  function checkDevice(event) {
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      event.preventDefault();
+      alert("Để tiếp tục, hãy sử dụng trình duyệt trên các thiết bị máy tính");
+    }
+  }
+
+  let intervalId = null;
+  function updateCartQuantity() {
+    fetch('/load')
+      .then(response => response.json())
+      .then(data => {
+        if (data.quantity === null) {
+          if (intervalId !== null) {
+            clearInterval(intervalId);
+          }
+        } else {
+          const cartQuantity = document.querySelector('#cartQuantity');
+          const inCartQuantity = document.querySelector('#inCartQuantity');
+          if (data.quantity !== undefined) {
+            cartQuantity.textContent = data.quantity;
+            if (inCartQuantity) {
+              inCartQuantity.textContent = data.quantity;
+            }
+            // Update the value of each element
+
+
+          } else {
+            console.log('data.quantity is undefined.');
+          }
+        }
+      })
+      .catch(error => console.error('Error fetching:', error));
+  }
+  updateCartQuantity();
+
+
+  intervalId = setInterval(updateCartQuantity, 2000);
+</script>

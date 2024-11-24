@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài khoản</title>
+  <link rel="shortcut icon" href="../images/favicon.png" type="image/x-icon">
+
+  <!-- all css -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/jquery-ui.css">
+  <link rel="stylesheet" href="../css/slick.css">
+  <link rel="stylesheet" href="../css/line-awesome.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+
+<body>
+
+
+  <%- include('../partials/navibar.ejs') %>
+  <!-- breadcrumbs -->
+  <div class="container">
+    <div class="breadcrumbs">
+      <a href="/"><i class="las la-home"></i></a>
+      <a href="/account" class="active">Tài khoản</a>
+    </div>
+  </div>
+
+  <!-- account -->
+  <div class="my_account_wrap section_padding_b">
+    <div class="container">
+      <div class="row">
+        <!--  account sidebar  -->
+        <%- include('../partials/accountSide.ejs') %>
+        <!-- account content -->
+        <div class="col-lg-9">
+          <div class="account_cont_wrap">
+            <div class="profile_info_wrap">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="single_prof_info shadow_sm">
+                    <div class="prof_info_title">
+                      <h4>Thông tin cá nhân</h4>
+                      <a href="/account/profile-info"> <a href="/account/profile-info">Sửa</a>
+                      </a>
+                    </div>
+                    <div class="prfo_info_cont">
+                      <p class="text-semibold">
+                      <strong><%=currentUser.username%></strong>
+                      <p><%= currentUser.firstName %> <%= currentUser.lastName %></p>
+                      </p>
+                      <p><%= currentUser.email%></p>
+                      <p><%= currentUser.phoneNumber%></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="single_prof_info shadow_sm">
+                    <div class="prof_info_title">
+                      <h4>Địa chỉ giao hàng</h4>
+                      <a href="/account/manage-address"> <a href="/account/manage-address">Sửa</a>
+                      </a>
+                    </div>
+                    <div class="prfo_info_cont">
+                      <% if (currentUser.shippingAddress) {%>
+                      <p class="text-semibold"><%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.fullName) || null %></p>
+                      <p><%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.address) || null %></p>
+                      <p>
+                        <%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.district) || null %>,
+                        <%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.city) || null %>,
+                        <%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.country) || null %>
+                      </p>
+                      <p><%= (currentUser && currentUser.shippingAddress && currentUser.shippingAddress.phoneNumber) || null %></p>
+                      <%} else {%>
+
+                      <p class="text-semibold">(Chưa cập nhật)</p>
+
+                      <%}%>
+                    
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="single_prof_info shadow_sm mb-0">
+                    <div class="prof_info_title">
+                      <h4>Địa chỉ thanh toán</h4>
+                      <a href="/account/billing-address">Sửa</a>
+                    </div>
+                    <div class="prfo_info_cont">
+
+
+                           <% if (currentUser.billingAddress) {%>
+                      <p class="text-semibold"><%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.fullName) || '' %></p>
+                      <p><%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.address) || null %></p>
+                      <p>
+                        <%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.district) || '' %>,
+                        <%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.city) || '' %>,
+                        <%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.country) || '' %>
+                      </p>
+                      <p><%= (currentUser && currentUser.billingAddress && currentUser.billingAddress.phoneNumber) || '' %></p>
+
+                      <%} else {%>
+                      <p class="text-semibold">(Chưa cập nhật)</p>
+                      <%}%>
+                    
+                    
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+            <div class="prof_recent_order shadow_sm">
+              <h4>Các đơn hàng gần đây</h4>
+
+     <% if (user.orders.length === 0) { %>
+                      <p>Bạn không có đơn hàng nào.</p>
+                      <% } else { %>
+                      <% user.orders.forEach(order => { %>
+
+
+
+                      <div class="single_prof_recorder">
+                        <div class="prorder_txt prorder_odnumber">
+                          <h5>ID đơn hàng</h5>
+                          <p><%= order.orderID%></p>
+                        </div>
+                        <div class="prorder_txt prorder_purchased">
+                          <h5>Ngày</h5>
+                          <%const dateFormat = new Date(order.createdAt).toLocaleString("en-GB", {day: "2-digit",month: "2-digit",year: "numeric",hour: "2-digit",minute: "2-digit"});%>
+                          <p><%= dateFormat%></p>
+                        </div>
+                        <div class="prorder_txt prorder_qnty d-none d-sm-block">
+                          <h5>Số lượng</h5>
+                          <p><%= order.quantityAll%></p>
+                        </div>
+                        <div class="prorder_txt prorder_total">
+                          <h5>Tổng</h5>
+                          <% const fortotalCost = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalCost); %>
+
+                          <p><%= fortotalCost%></p>
+                        </div>
+                        <div class="prorder_txt prorder_status">
+                          <h5 class="d-none d-md-block">Tình trạng </h5>
+                          <p class="
+                          <%if (order.status === "Đợi xác nhận" || order.status === "Chuẩn bị hàng" || order.status === "Đang giao hàng"  ) {%>
+                          text-warning
+                          <%} else {%>
+                          text-success
+                          <%}%>
+
+                          "><%= order.status%></p>
+                        </div>
+                        <div class=" prorder_txt prorder_odnumber">
+                          <h5>Mã vận đơn</h5>
+                          <p><%= order.trackingID%></p>
+                        </div>
+                        <div class="prorder_btn">
+                          <a href="/account/order-history/<%= order.orderID%>">Chi tiết</a>
+                        </div>
+                      </div>
+
+                      <% }) %>
+                      <% } %>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <%- include('../partials/footer.ejs') %>
+
+          <!-- all js -->
+          <script src="../js/jquery-3.5.1.min.js"></script>
+          <script src="../js/jquery-ui.min.js"></script>
+          <script src="../js/slick.min.js"></script>
+          <script src="../js/jquery.nice-select.min.js"></script>
+          <script src="../js/app.js"></script>
+          <script src="../js/cart.js"></script>
+</body>
+
+
+</html>

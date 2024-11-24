@@ -1,0 +1,53 @@
+<div class="col-lg-3">
+          <div class="account_sidebar">
+            <div class="account_profile position-relative shadow_sm">
+          
+              <div class="acprof_cont">
+                <p>Xin chào,</p>
+                <h4><p><%= currentUser.lastName %> <%= currentUser.firstName %></p></h4>
+              </div>
+              <div class="profile_hambarg d-lg-none d-block">
+                <i class="las la-bars"></i>
+              </div>
+            </div>
+            <div class="acprof_wrap shadow_sm">
+              <div class="acprof_links">
+                <a href="/account/" class="active">
+                  <h4 class="acprof_link_title">
+                    <i class="lar la-id-card"></i>
+                    Quản lí tài khoản
+                  </h4>
+                </a>
+                <a href="/account/profile-info">Thông tin cá nhân</a>
+                <a href="/account/manage-address">Địa chỉ giao hàng</a>
+                <a href="/account/billing-address">Địa chỉ thanh toán</a>
+                <a href="/account/change-password">Đổi mật khẩu</a>
+              </div>
+              <div class="acprof_links">
+                <a href="/account/order-history">
+                  <h4 class="acprof_link_title">
+                    <i class="las la-gift"></i>
+                    Lich sử đơn hàng
+                  </h4>
+                </a>
+              </div>
+              <div class="acprof_links">
+                <a href="/account/payment-methods">
+                  <h4 class="acprof_link_title">
+                    <i class="las la-credit-card"></i>
+                    Phương thức thanh toán
+                  </h4>
+                </a>
+              </div>
+
+              <div class="acprof_links border-0">
+                <a href="/logout">
+                  <h4 class="acprof_link_title">
+                    <i class="las la-power-off"></i>
+                    Đăng xuất
+                  </h4>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>

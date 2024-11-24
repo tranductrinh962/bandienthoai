@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sửa người dùng</title>
+ 
+ <link rel="shortcut icon" href="../../../images/favicon.png" type="image/x-icon">
+    <!-- all css -->
+  <link rel="stylesheet" href="../../../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../../css/jquery-ui.css">
+  <link rel="stylesheet" href="../../../css/slick.css">
+  <link rel="stylesheet" href="../../../css/line-awesome.css">
+  <link rel="stylesheet" href="../../../css/nice-select.css">
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../../css/responsive.css">
+  
+</head>
+
+<body>
+  <!--navibar -->
+ <%- include('../../partials/navibar.ejs') %>
+
+<div class="container">
+<h1 class="text-center mb-4 mt-4" style="font-weight: 300; color: #333;">Sửa người dùng</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form action="/settings/users/<%= user._id %>/edit" method="POST">
+        <div class="form-group">
+          <label for="username" style="font-weight: 500; color: #666;">Người dùng:</label>
+          <input type="text" class="form-control" id="name" name="username" value="<%= user.username %>" disabled style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+        </div>
+        <div class="form-group">
+          <label for="id" style="font-weight: 500; color: #666;">ID:</label>
+          <input type="text" class="form-control" id="name" name="id" value="<%= user.userID %>" disabled style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+        </div>
+        <div class="form-group">
+          <label for="firstName" style="font-weight: 500; color: #666;">Tên:</label>
+          <input type="text" class="form-control" id="name" name="firstName" value="<%= user.firstName %>" disabled style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+        </div>
+        <div class="form-group">
+          <label for="lastName" style="font-weight: 500; color: #666;">Họ và (hoặc) tên đệm:</label>
+          <input type="text" class="form-control" id="name" name="lastName" value="<%= user.lastName %>" disabled style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+        </div>
+        <% if (user.role !== 'Admin'){ %>
+        <div class="form-group">
+          <label for="role" style="font-weight: 500; color: #666;">Quyền:</label>
+          <select class="form-control" id="role" name="role" required style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+           
+            <option value="Admin">Admin</option>
+           
+            <option value="Nhân viên bán hàng" <%= user.role === 'Nhân viên bán hàng' ? 'selected' : '' %>>Nhân viên bán hàng</option>
+            <option value="Nhân viên kho hàng" <%= user.role === 'Nhân viên kho hàng' ? 'selected' : '' %>>Nhân viên kho hàng</option>
+            <option value="Khách hàng" <%= user.role === 'Khách hàng' ? 'selected' : '' %>>Khách hàng</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="isActive" style="font-weight: 500; color: #666;">Tình trạng:</label>
+          <select class="form-control" id="isActive" name="isActive" required style="border: 1px solid #ddd; border-radius: 4px; padding: 8px 12px; font-size: 14px;">
+            <option value="true" <%= user.isActive === true ? 'selected' : '' %>>Hoạt động</option>
+            <option value="false" <%= user.isActive === false ? 'selected' : '' %>>Vô hiệu hóa</option>
+          </select>
+        </div>
+        <%}%>
+        <button type="submit" class="btn btn-primary btn-block" style="background-color: #333; border: none; border-radius: 4px; padding: 10px 16px; font-size: 16px; font-weight: 500; color: #fff;">Cập nhật dữ liệu</button>
+        <a class="btn btn-primary btn-block" style="background-color: #333; border: none; border-radius: 4px; padding: 10px 16px; font-size: 16px; font-weight: 500; color: #fff;" href="/settings">Quay về</a>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+ <script src="../../../js/jquery-3.5.1.min.js"></script>
+  <script src="../../../js/jquery-ui.min.js"></script>
+  <script src="../../../js/slick.min.js"></script>
+  <script src="../../../js/jquery.nice-select.min.js"></script>
+  <script src="../../../js/app.js"></script>
+</body>
+</html>

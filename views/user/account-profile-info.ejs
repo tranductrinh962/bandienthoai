@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Thông tin tài khoản</title>
+  <link rel="shortcut icon" href="../images/favicon.png" type="image/x-icon">
+
+  <!-- all css -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/jquery-ui.css">
+  <link rel="stylesheet" href="../css/slick.css">
+  <link rel="stylesheet" href="../css/line-awesome.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+
+<body>
+  <%- include('../partials/navibar.ejs') %>
+  <!-- Spinner -->
+  <div id="spinner">
+    <div class="spinner-content">
+      <div class="spinner-icon">&#9696;</div>
+      <p>Loading...</p>
+    </div>
+  </div>
+  <!--End of Spinner-->
+
+
+  <!-- breadcrumbs -->
+  <div class="container">
+    <div class="breadcrumbs">
+      <a href="/"><i class="las la-home"></i></a>
+      <a href="/account">Tài khoản</a>
+      <a href="/account/profile-info" class="active">Thông tin cá nhân</a>
+    </div>
+  </div>
+
+
+  <!-- account wrapper -->
+  <div class="my_account_wrap section_padding_b">
+    <div class="container">
+      <div class="row">
+        <!--  account sidebar  -->
+        <%- include('../partials/accountSide.ejs') %>
+        <!-- account content -->
+        <div class="col-lg-9">
+          <div class="acprof_info_wrap shadow_sm">
+            <h4 class="text_xl mb-3">Thông tin cá nhân</h4>
+            <form action="/account/profile-info" method="post">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Tên đầu</label>
+                    <input type="text" name="firstName" oninput="validateFirstName(event)" Value="<%= currentUser.firstName %>">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Tên họ đệm</label>
+                    <input type="text" name="lastName" oninput="validateLastName(event)" Value="<%= currentUser.lastName %>">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Ngày sinh</label>
+                    <input type="date" name="birthDate" value="<%= currentUser.birthDate ? currentUser.birthDate.toISOString().split('T')[0] : '' %>">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Giới tính</label>
+                    <select name="gender" class="nice_select">
+                      <% if (currentUser.gender !== "Nam" && currentUser.gender !== "Nữ" && currentUser.gender !== "Khác") {%>
+                      <option>Chọn giới tính</option>
+                      <%}%>
+                                            <option <% if (currentUser.gender === "Nam") { %>selected<% }%>>Nam</option>
+                      <option <% if (currentUser.gender === "Nữ") { %>selected<% }%>>Nữ</option>
+                      <option <% if (currentUser.gender === "Khác") { %>selected<% }%>>Khác</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Địa chỉ email</label>
+                    <input type="text" class="disabled" disabled value="<%= currentUser.email %>">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="single_billing_inp">
+                    <label>Số điện thoại</label>
+                    <input type="text" name="phoneNumber" oninput="validatePhone(event)" value="<%= currentUser.phoneNumber %>">
+                  </div>
+                </div>
+                <div class="col-12 acprof_subbtn">
+                  <button type="submit" class="default_btn rounded small">Lưu</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer area -->
+  <%- include('../partials/footer.ejs') %>
+  <!-- all js -->
+  <script src="../js/jquery-3.5.1.min.js"></script>
+  <script src="../js/jquery-ui.min.js"></script>
+  <script src="../js/slick.min.js"></script>
+  <script src="../js/jquery.nice-select.min.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    function validateFirstName(event) {
+      event.target.value = event.target.value.replace(/[^a-zA-ZÀ-ỹ]/g, '');
+    }
+
+    function validateLastName(event) {
+      event.target.value = event.target.value.replace(/[^a-zA-ZÀ-ỹ ]/g, '');
+    }
+
+     function validatePhone(event) {
+            event.target.value = event.target.value.replace(/[^0-9]/g, '');
+        }
+
+
+    $(document).ready(function() {
+      let alertElement = null;
+
+      $('form').submit(function(event) {
+        event.preventDefault();
+        const formData = $(this).serialize();
+
+        $.ajax({
+          type: 'POST',
+          url: '/account/profile-info',
+          data: formData,
+          beforeSend: showSpinner,
+          complete: hideSpinner,
+          success: function(response) {
+            showAlert('success', 'Cập nhật thành công');
+          },
+          error: function(error) {
+            showAlert('danger', 'Một số thông tin nhập chứa kí tự không hơp lệ, vui lòng thử lại.');
+            console.error(error);
+          }
+        });
+      });
+
+      function showAlert(type, message) {
+        alertElement?.remove();
+        alertElement = $(`<div class="alert alert-${type} alert-dismissible fade show">${message}</div>`);
+        $('form').prepend(alertElement);
+        setTimeout(() => alertElement.alert('close'), 5000);
+      }
+
+      function showSpinner() {
+        $('#spinner').show();
+      }
+
+      function hideSpinner() {
+        $('#spinner').hide();
+      }
+    });
+  </script>
+</body>
+
+
+</html>

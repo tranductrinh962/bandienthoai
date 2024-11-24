@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết sản phẩm</title>
+  <link rel="shortcut icon" href="../../images/favicon.png" type="image/x-icon">
+
+  <!-- all css -->
+
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/jquery-ui.css">
+  <link rel="stylesheet" href="../css/slick.css">
+  <link rel="stylesheet" href="../css/line-awesome.css">
+  <link rel="stylesheet" href="../css/nice-select.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Spinner -->
+
+
+  <!-- breadcrumbs -->
+  <%- include('../partials/navibar.ejs') %>
+
+
+  <div class="container">
+    <div class="breadcrumbs">
+      <a href="/"><i class="las la-home"></i></a>
+      <a href="/products">Cửa hàng</a>
+      <a href="#" class="active"><%= product.name%></a>
+    </div>
+  </div>
+
+
+  <!-- product view -->
+  <div class="product_view_wrap section_padding_b">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="product_view_slider">
+            <div class="single_viewslider">
+
+              <% let imgSrc, fallbackImgSrc = '../images/default.jpg'; %>
+              <% if (product.image) { %>
+              <% imgSrc = `../data/product-images/${product.image}`; %>
+              <img loading="lazy" class="prd_img" src="<%= imgSrc %>" alt="product">
+              <% } else { %>
+              <img loading="lazy" class="prd_img" src="<%= fallbackImgSrc %>" alt="product">
+              <% } %>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-5">
+          <form action="/add-to-cart/<%= product._id%>" method="post">
+            <div class="product_info_wrapper">
+              <div class="product_base_info">
+                <%if(product.isHot){%>
+                <span class="badge bg-danger text-white mb-1">Sản phẩm HOT</span>
+                <%}%>
+                <h1><%= product.name%> <span id="spec-display"></span></h1>
+                <div class="product_other_info">
+                  <p><span>Hàng:</span><span class="text-green">Còn</span></p>
+                  <p><span>Thương hiệu:</span><%= product.productBrand.brand%></p>
+                  <p><span>Mã máy:</span><%= product.model%></p>
+                  <p><span>SKU:</span><%= product.productID%></p>
+ 
+                </div>
+
+                <div class="price mt-3 mb-3 d-flex align-items-center">
+
+                  <span id="price-display" class="org_price"></span>
+                  <div id="price-display"></div>
+                  <% if (product.discount) {%>
+                  <div class="disc_tag ms-3">Giảm <%= product.discount%>%</div>
+                  <%}%>
+                </div>
+
+                <div class="shop_filter border-bottom-0 pb-0">
+                  <div class="size_selector mb-3">
+                    <h5>Màu:</h5>
+                    <div id="spinner1">
+                                     <div class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+                    </div>
+                    <div id="color-selector">
+                    </div>
+                  </div>
+                </div>
+                <div class="size_selector color_selector">
+                  <h5>Tùy chọn cấu hình:</h5>
+   
+                  <div id="spinner2">
+                                   <div class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+                  </div>
+                  <div id="spec-selector">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div id="addBtn" class="product_buttons">
+              
+              <!-- <a href="#" class="default_btn small rounded second border-none"><i class="icon-cart me-2"></i> Thêm vô giỏ hàng</a> -->
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="product_view_tabs mt-4">
+        <div class="pv_tab_buttons" class="spec_text">
+          <div class="pbt_single_btn active" data-target=".info">Thông tin chi tiết sản phẩm</div>
+        </div>
+        <div class="pb_tab_content info active">
+          <div class="row">
+            <div class="col">
+              <div class="pbt_info_text">
+                <p>
+                <%= product.description%>
+                  </p>
+
+                </div>
+                <div class="pbt_info_table">
+                  <div class="pbtit_single">
+                    <p class="specs">Màn hình</p>
+                    <p class="spec_text"><%= product.generalSpecifications.display%></p>
+                  </div>
+                  <div class="pbtit_single">
+                    <p class="specs">Hệ điều hành</p>
+                    <p class="spec_text"><%= product.os%></p>
+                  </div>
+                  <div class="pbtit_single">
+                    <p class="specs">Camera sau</p>
+                    <p class="spec_text"><%= product.generalSpecifications.camera.primary%></p>
+                  </div>
+                  <div class="pbtit_single">
+                    <p class="specs">Camera trước</p>
+                    <p class="spec_text"><%= product.generalSpecifications.camera.secondary%></p>
+                  </div>
+                  <div class="pbtit_single">
+                    <p class="specs">Chip</p>
+                    <p class="spec_text"><%= product.generalSpecifications.cpu%></p>
+                  </div>
+                  <div class="pbtit_single">
+                    <p class="specs">Pin</p>
+                    <p class="spec_text"><%= product.generalSpecifications.battery%> mAh</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- new arrive -->
+  <section class="new_arrive section_padding_b">
+    <div class="container">
+      <div class="d-flex align-items-start justify-content-between">
+        <h2 class="section_title_2">Bạn có thể sẽ quan tâm</h2>
+      </div>
+      <div class="row gy-4">
+
+        <% randomProducts.forEach(product => { %>
+        <div class="col-lg-3 col-sm-6">
+          <div class="single_new_arrive">
+            <div class="sna_img">
+              <a href="product-view.html">
+                <img loading="lazy" class="prd_img" src="../data/product-images/<%=product.image%>" alt="product">
+              </a>
+              <%if (product.isHot){%>
+              <span class="tag">Hot</span>
+              <%}%>
+                    <div class="prodcut_hovcont">
+                      <a href="/products/<%= product._id %>" class="icon open_quickview" tabindex="0">
+              <i class="icon-search-left"></i>
+              </a>
+            </div>
+          </div>
+          <div class="sna_content">
+            <a href="/products/<%= product._id %>">
+              <h4><%= product.name%> <%= product.minPriceWithRam%>GB/<%= product.minPriceWithStorage%>GB</h4>
+            </a>
+
+            <div class="ratprice">
+              <%if (product.isSpecs) {%>
+              <p class="mb-1" style="color: #666;font-size: 14px">Nhiều lựa chọn cấu hình</p>
+              <%}%>
+                    <div class="price">
+                      <strong style="color: #d0021c;
+    font-size: 18px;">
+                        <% 
+const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.minPrice); %>
+              <%= formattedPrice
+  %>
+              </strong>
+              <% if (product.discount) {%>
+              <span style="color: #eb5757;
+    background: #fff0e9;
+    border-radius: 4px;
+    padding: 1px 2px 2px 2px;
+    margin-left: 7px;
+    font-size: 14px;"> -
+                <%= product.discount%>%</span>
+              <%}%>
+                      </div>
+                    </div>
+                    <div class="product_adcart">
+                      <a href="/products/<%= product._id %>" class="btn btn-danger text-white rounded">Chi tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+
+
+
+
+    </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer.ejs') %>
+
+  <script>
+    const productID = '<%= product._id %>';
+
+
+    // Fetch all colors for the product
+    $.ajax({
+      url: `/products/${productID}/colors`,
+      method: 'GET',
+      success: function(data) {
+        showSpinner(1)
+        const colors = data.colors;
+
+        renderColors(colors);
+
+        // Fetch the specs for the first color (as the default)
+        fetchSpecs(colors[0]);
+        hideSpinner(1)
+      },
+      error: function(err) {
+        console.error(err);
+      }
+    });
+
+    // Function to render the color radio buttons
+    function renderColors(colors) {
+      let colorHTML = '';
+      colors.forEach(color => {
+        colorHTML += `
+           <input type="radio" class="btn-check me-1" name="color" data-color="${color}" value="${color}"
+             id="color-${color}" autocomplete="off" ${colors[0] === color ? 'checked' : ''}>
+             <label class="btn btn-outline-dark" for="color-${color}">${color}</label>
+          `;
+      });
+      $('#color-selector').html(colorHTML);
+      $('#color-selector input[type="radio"]').on('change', function() {
+        const selectedColor = $(this).val();
+        fetchSpecs(selectedColor);
+      });
+    }
+
+    // Function to fetch the specs for a specific color
+    function fetchSpecs(color) {
+      showSpinner(2)
+      $.ajax({
+        url: `/products/${productID}/${color}`,
+        method: 'GET',
+        success: function(data) {
+          const specs = data.specs;
+          renderSpecs(specs, color);
+          hideSpinner(2)
+        },
+        error: function(err) {
+          console.error(err);
+        }
+      });
+    }
+
+    function renderSpecs(specs, color) {
+      let spect = ''
+      let specHTML = '';
+      let isFirstChecked = false;
+      let toCheck = ""
+      let btn = '<button type="submit" class="default_btn small rounded me-sm-3 me-2 px-4"><i class="icon-cart me-2"></i> Thêm vô giỏ hàng</button>'
+      specs.forEach(spec => {
+
+        if (spec.stock <= 0) {
+          return
+        }
+        if (!isFirstChecked) {
+          toCheck = "checked"
+          isFirstChecked = true
+          const formattedPrice = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+          }).format(spec.price);
+          $('#price-display').text(`${formattedPrice}`);
+
+          spect = `${spec.ram}GB/${spec.storage}GB`
+           $('#spec-display').text(`${spect}`);
+        } else {
+          toCheck = ""
+        }
+
+        specHTML += `
+            <input type="radio" class="btn-check me-1" name="spec" value="${spec.specID}" id="spec-${spec.specID}" data-color="${color}" ${toCheck} autocomplete="off">
+            <label class="btn btn-outline-dark" for="spec-${spec.specID}">${spec.ram}-${spec.storage}</label>
+          `;
+      });
+      $('#spec-selector').html(specHTML);
+      $('#addBtn').html(btn);
+      $('#spec-selector input[type="radio"]').on('change', function() {
+        const selectedSpecID = $(this).val();
+        const selectedColor = $(this).data('color');
+        fetchPrice(selectedSpecID, selectedColor);
+      });
+
+    }
+
+    function fetchPrice(specID, color) {
+
+      $.ajax({
+        url: `/products/${productID}/${color}/${specID}`,
+        method: 'GET',
+        success: function(data) {
+          const price = data.price;
+          let spec =''
+          const formattedPrice = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+          }).format(price);
+
+          $('#price-display').text(`${formattedPrice}`);
+          spec = `${data.ram}GB/${data.storage}GB`
+           $('#spec-display').text(`${spec}`);
+        },
+        error: function(err) {
+          console.error(err);
+        }
+      });
+    }
+
+
+    function showSpinner(a) {
+      document.getElementById(`spinner${a}`).style.display = 'block';
+    }
+
+
+    function hideSpinner(a) {
+      document.getElementById(`spinner${a}`).style.display = 'none';
+    }
+  </script>
+</body>
+
+
+</html>
